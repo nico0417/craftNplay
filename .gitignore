@@ -1,3 +1,5 @@
+servers.json
+
 # Archivos de caché de Python
 __pycache__/
 *.pyc
