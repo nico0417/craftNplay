@@ -79,7 +79,7 @@ class ServerManagement(commands.Cog):
                 creationflags=subprocess.CREATE_NEW_CONSOLE
             )
             self.running_servers[server_name] = process
-            await ctx.send(f'El servidor `{server_name}` se ha iniciado con PID: `{process.pid}`.')
+            await ctx.send(f'El servidor `{server_name}` se ha iniciado. Dale unos minutos para que esté en línea.')
             return True
         except Exception as e:
             await ctx.send(f'❌ Ocurrió un error al iniciar `{server_name}`: {e}')
