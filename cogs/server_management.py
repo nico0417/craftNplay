@@ -117,5 +117,5 @@ class ServerManagement(commands.Cog):
         await asyncio.sleep(5)  # Esperar un momento antes de iniciar de nuevo
         await self.start_server(ctx, server_name)
 
-def setup(bot):
-    bot.add_cog(ServerManagement(bot))
+async def setup(bot):
+    await bot.add_cog(ServerManagement(bot))
