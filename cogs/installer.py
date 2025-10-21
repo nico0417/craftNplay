@@ -8,34 +8,14 @@ class Installer(commands.Cog):
     """
     def __init__(self, bot):
         self.bot = bot
-        # Usar el manager central en lugar de manejar el archivo localmente
-        self.config = getattr(bot, "config_manager", None)
-        if self.config is None:
-            # Fallback por si el bot no tiene config_manager
-            self.servers_file = 'servers.json'
-        else:
-            self.servers_file = self.config.servers_file
-
-    def load_servers(self):
-        """Carga la base de datos de servidores de forma segura."""
-        if not os.path.exists(self.servers_file):
-            return {}
-        try:
-            with open(self.servers_file, 'r') as f:
-                return json.load(f)
-        except (json.JSONDecodeError, FileNotFoundError):
-            return {}
-
-    def save_servers(self, data):
-        """Guarda los datos en la base de datos de servidores."""
-        with open(self.servers_file, 'w') as f:
-            json.dump(data, f, indent=4)
+        # Usar el manager central que está en el bot
+        self.config = bot.config_manager 
 
     @commands.command(name='install')
     @commands.is_owner()
     async def install_server(self, ctx, server_type: str, version: str, base_name: str, *, parent_path: str):
         """
-        Crea la estructura de carpetas para un nuevo servidor y lo registra.
+        Crea la estructura de carpetas, EULA y config. de RAM para un nuevo servidor.
         Uso: !install <tipo> <version> <nombre> <ruta_padre>
         Ejemplo: !install neoforge 1.21.1 mi_servidor D:\\ServidoresMC
         """
@@ -59,39 +39,50 @@ class Installer(commands.Cog):
             await ctx.send(f'❌ Error al crear la carpeta del servidor: {e}')
             return
 
-        # 3. Registrar el nuevo servidor en servers.json
-        # Usar el manager centralizado
-        if self.config:
-            if base_name in self.config.servers:
-                await ctx.send(f'⚠️ Ya existe una configuración para un servidor llamado `{base_name}`. Se sobrescribirá.')
-            self.config.servers[base_name] = {
-                "path": full_server_path,
-                "script": "run.bat",
-                "address": "localhost:25565",
-                "rcon_port": 25575,
-                "rcon_host": "localhost"
-            }
-            self.config.save_servers()
-        else:
-            servers = self.load_servers()
-            if base_name in servers:
-                await ctx.send(f'⚠️ Ya existe una configuración para un servidor llamado `{base_name}`. Se sobrescribirá.')
-            servers[base_name] = {
-                "path": full_server_path,
-                "script": "run.bat",
-                "address": "localhost:25565",
-                "rcon_port": 25575,
-                "rcon_host": "localhost"
-            }
-            self.save_servers(servers)
+        # 3. Crear y aceptar el EULA automáticamente
+        try:
+            eula_path = os.path.join(full_server_path, 'eula.txt')
+            with open(eula_path, 'w') as f:
+                f.write('eula=true\n')
+            await ctx.send('✅ `eula.txt` creado y aceptado.')
+        except Exception as e:
+            await ctx.send(f'❌ Error al crear `eula.txt`: {e}')
+            return # Detener si esto falla
 
-        await ctx.send(f'💾 ¡Servidor `{base_name}` registrado en `servers.json`! Ahora puedes usar `!iniciar {base_name}`.')
+        # 4. Crear el archivo de argumentos de RAM (para Fabric/NeoForge/Forge)
+        jvm_args_content = (
+            "# Configuración de JVM generada por CraftNPlay\n"
+            "# -Xms: RAM inicial asignada\n"
+            "# -Xmx: RAM máxima asignada\n"
+            "-Xms4G\n"
+            "-Xmx4G\n"
+        )
+        try:
+            jvm_args_path = os.path.join(full_server_path, 'user_jvm_args.txt')
+            with open(jvm_args_path, 'w') as f:
+                f.write(jvm_args_content)
+            await ctx.send('✅ `user_jvm_args.txt` creado con 4GB de RAM por defecto.')
+        except Exception as e:
+            await ctx.send(f'❌ Error al crear `user_jvm_args.txt`: {e}')
         
-        # Simulación de los siguientes pasos
+        # 5. Registrar el nuevo servidor usando el método del config manager
+        if base_name in self.config.servers:
+            await ctx.send(f'⚠️ Ya existe una configuración para un servidor llamado `{base_name}`. Se sobrescribirá.')
+        
+        self.config.add_server(
+            name=base_name,
+            path=full_server_path,
+            script="run.bat", # Asumimos que el instalador creará "run.bat"
+            rcon_port=25575 # Puerto RCON por defecto
+        )
+        
+        await ctx.send(f'💾 ¡Servidor `{base_name}` registrado! Ahora puedes usar `!iniciar {base_name}`.')
+        
+        # 6. Actualizar el mensaje de "Próximos pasos"
         await ctx.send(f'**Próximos pasos (manuales):**\n'
-                       f'1. Descarga el instalador de `{server_type}` para la versión `{version}`.\n'
-                       f'2. Ejecútalo dentro de la nueva carpeta para instalar los archivos del servidor.\n'
-                       f'3. Asegúrate de que el script de inicio se llame `run.bat` o actualiza `servers.json` con el nombre correcto.')
+                       f'1. Descarga el instalador de `{server_type}` (versión `{version}`).\n'
+                       f'2. **MUÉVELO** a la nueva carpeta (`{full_server_path}`).\n'
+                       f'3. **EJECÚTALO** allí para que instale los archivos del servidor. Esto creará el `run.bat` automáticamente.')
 
     @install_server.error
     async def install_error(self, ctx, error):
