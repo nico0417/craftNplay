@@ -1,0 +1,7 @@
+{
+  "panamigos": {
+    "path": "C:/Users/Nicolas/Documents/ServerPanamundoAmigos",
+    "script": "iniciar_servidor.bat",
+    "rcon_port": 25575
+  }
+}
