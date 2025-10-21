@@ -33,3 +33,23 @@ CraftNPlay es un bot de Discord escrito en Python para la gestión remota de ser
 
 4.  **Configurar las Variables de Entorno:**
     El bot carga las credenciales de forma segura. Debes configurar las siguientes variables de entorno en tu sistema:
+    * `DISCORD_BOT_TOKEN`: El token secreto de tu bot de Discord.
+    * `RCON_PASSWORD`: La contraseña que acabas de poner en `server.properties`.
+
+5.  **Actualizar las Rutas:**
+    * Dentro de `bot.py`, ajusta las siguientes variables en la sección de configuración para que coincidan con tus rutas locales:
+        ```python
+        BASE_PATH = 'C:/Ruta/A/Tu/Servidor'
+        SCRIPT_PATH = os.path.join(BASE_PATH, 'iniciar_servidor.bat')
+        SERVER_DIRECTORY = BASE_PATH
+        PLAYIT_PATH = 'C:/Program Files/playit_gg/bin/playit.exe'
+        ```
+
+6.  **Ejecutar el Bot:**
+    ```sh
+    python bot.py
+    ```
+
+---
+
+*Este proyecto fue creado como una herramienta de gestión personal para un servidor de amigos.*
