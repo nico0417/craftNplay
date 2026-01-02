@@ -10,7 +10,6 @@ env/
 # Archivos de configuración con secretos
 # (Aunque usamos variables de entorno, es una buena práctica)
 .env
-config.py
 
 # Registros y bases de datos
 *.log
