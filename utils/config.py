@@ -36,3 +36,5 @@ class Config:
         if name in self.servers:
             del self.servers[name]
             self.save_servers()
+
+            
