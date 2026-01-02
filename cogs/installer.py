@@ -54,14 +54,14 @@ class Installer(commands.Cog):
             "# Configuración de JVM generada por CraftNPlay\n"
             "# -Xms: RAM inicial asignada\n"
             "# -Xmx: RAM máxima asignada\n"
-            "-Xms4G\n"
-            "-Xmx4G\n"
+            "-Xms6G\n"
+            "-Xmx6G\n"
         )
         try:
             jvm_args_path = os.path.join(full_server_path, 'user_jvm_args.txt')
             with open(jvm_args_path, 'w') as f:
                 f.write(jvm_args_content)
-            await ctx.send('✅ `user_jvm_args.txt` creado con 4GB de RAM por defecto.')
+            await ctx.send('✅ `user_jvm_args.txt` creado con 6GB de RAM por defecto.')
         except Exception as e:
             await ctx.send(f'❌ Error al crear `user_jvm_args.txt`: {e}')
         

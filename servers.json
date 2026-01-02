@@ -1,7 +1,1 @@
-{
-  "panamigos": {
-    "path": "C:/Users/Nicolas/Documents/ServerPanamundoAmigos",
-    "script": "iniciar_servidor.bat",
-    "rcon_port": 25575
-  }
-}
+{"panamigos": {"path": "C:/Users/Nicolas/Documents/ServerPanamundoAmigos", "script": "iniciar_servidor.bat", "rcon_port": 25575}, "Unmonton": {"path": "C:\\Users\\Nicolas\\Documents\\Servers\\Unmonton_1.19.2_forge", "script": "run.bat", "rcon_port": 25575}, "mundo": {"path": "C:\\Users\\Nicolas\\Documents\\Servers\\mundo_1.21.11_vanilla", "script": "run.bat", "rcon_port": 25575}, "mundo1": {"path": "C:\\Users\\Nicolas\\Documents\\Servers\\mundo1_1.21.11_fabric", "script": "run.bat", "rcon_port": 25575}}
